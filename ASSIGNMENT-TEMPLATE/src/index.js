@@ -10,12 +10,12 @@
  * - Option 3: To-Do List Manager
  * - Option 4: Number Guessing Game (Enhanced)
  * 
- * Author: [Your Name]
- * Date: [Today's Date]
+ * Author: ABOI SAMSON ABOI 
+ * Date: 2026-03-12
  * Bootcamp: 3LOGY Software Development 2026
  */
 
-// Import readline for user input (Node.js built-in module)
+/// Import readline for user input (Node.js built-in module)
 const readline = require('readline');
 
 // Create readline interface
@@ -27,12 +27,7 @@ const rl = readline.createInterface({
 // ==========================================
 // GLOBAL VARIABLES
 // ==========================================
-
-// TODO: Add your global variables here
-// Examples:
-// let history = [];
-// let memory = 0;
-// let score = 0;
+let tasks = []; // store tasks as objects
 
 // ==========================================
 // HELPER FUNCTIONS
@@ -43,10 +38,9 @@ const rl = readline.createInterface({
  */
 function displayWelcome() {
   console.log('\n========================================');
-  console.log('   Welcome to [Your Project Name]!');
+  console.log('   Welcome to To-Do List Manager!');
   console.log('========================================\n');
-  
-  // TODO: Add more welcome information
+  console.log('Manage your tasks with deadlines, categories, and completion tracking.\n');
 }
 
 /**
@@ -54,10 +48,10 @@ function displayWelcome() {
  */
 function displayMenu() {
   console.log('\n--- Main Menu ---');
-  console.log('1. [Option 1]');
-  console.log('2. [Option 2]');
-  console.log('3. [Option 3]');
-  console.log('4. [Option 4]');
+  console.log('1. Add Task');
+  console.log('2. View All Tasks');
+  console.log('3. Mark Task as Complete');
+  console.log('4. Filter Tasks by Category');
   console.log('5. Exit');
   console.log('');
   
@@ -100,24 +94,36 @@ function getNumberInput(prompt, callback) {
  * TODO: Implement your first feature
  */
 function feature1() {
-  console.log('\n--- Feature 1 ---');
-  // TODO: Add your feature logic here
-  
-  // Example structure:
-  // getNumberInput('Enter a number: ', (num) => {
-  //   // Do something with num
-  //   console.log(`You entered: ${num}`);
-  //   mainLoop(); // Return to menu
-  // });
+  console.log('\n--- Add Task ---');
+  rl.question('Enter task title: ', (title) => {
+    rl.question('Enter deadline (YYYY-MM-DD HH:MM): ', (deadline) => {
+      rl.question('Enter category (Work/Personal/Urgent): ', (category) => {
+        const task = {
+          id: Date.now(),
+          title,
+          deadline,
+          category,
+          completed: false
+        };
+        tasks.push(task);
+        console.log(`Task "${title}" added successfully!`);
+        mainLoop();
+      });
+    });
+  });
 }
 
-/**
- * Feature 2: [Describe what this does]
- * TODO: Implement your second feature
- */
 function feature2() {
-  console.log('\n--- Feature 2 ---');
-  // TODO: Add your feature logic here
+  console.log('\n--- View All Tasks ---');
+  if (tasks.length === 0) {
+    console.log('No tasks available.');
+  } else {
+    tasks.forEach((task, index) => {
+      console.log(
+        `${index + 1}. ${task.title} | Deadline: ${task.deadline} | Category: ${task.category} | Completed: ${task.completed ? '✔' : '❌'}`
+      );
+    });
+  }
   mainLoop();
 }
 
@@ -126,16 +132,45 @@ function feature2() {
  * TODO: Implement your third feature
  */
 function feature3() {
-  console.log('\n--- Feature 3 ---');
-  // TODO: Add your feature logic here
-  mainLoop();
+  console.log('\n--- Mark Task as Complete ---');
+  if (tasks.length === 0) {
+    console.log('No tasks to mark.');
+    return mainLoop();
+  }
+  tasks.forEach((task, index) => {
+    console.log(`${index + 1}. ${task.title} [${task.completed ? '✔' : '❌'}]`);
+  });
+  rl.question('Enter task number to mark complete: ', (num) => {
+    const index = parseInt(num) - 1;
+    if (index >= 0 && index < tasks.length) {
+      tasks[index].completed = true;
+      console.log(`Task "${tasks[index].title}" marked as complete!`);
+    } else {
+      console.log('Invalid task number.');
+    }
+    mainLoop();
+  });
 }
 
-/**
- * Exit the program
- */
+function feature4() {
+  console.log('\n--- Filter Tasks by Category ---');
+  rl.question('Enter category to filter (Work/Personal/Urgent): ', (category) => {
+    const filtered = tasks.filter(task => task.category.toLowerCase() === category.toLowerCase());
+    if (filtered.length === 0) {
+      console.log(`No tasks found in category "${category}".`);
+    } else {
+      filtered.forEach((task, index) => {
+        console.log(
+          `${index + 1}. ${task.title} | Deadline: ${task.deadline} | Completed: ${task.completed ? '✔' : '❌'}`
+        );
+      });
+    }
+    mainLoop();
+  });
+}
+
 function exitProgram() {
-  console.log('\nThank you for using [Your Project Name]!');
+  console.log('\nThank you for using To-Do List Manager!');
   console.log('Goodbye! 👋\n');
   rl.close();
 }
@@ -144,17 +179,10 @@ function exitProgram() {
 // MAIN PROGRAM LOGIC
 // ==========================================
 
-/**
- * Main program loop
- */
 function mainLoop() {
   displayMenu();
-  
   rl.question('Enter your choice (1-5): ', (choice) => {
-    // Parse choice as integer
     const option = parseInt(choice);
-    
-    // Handle menu selection
     switch(option) {
       case 1:
         feature1();
@@ -166,9 +194,7 @@ function mainLoop() {
         feature3();
         break;
       case 4:
-        // TODO: Add your 4th feature
-        console.log('Feature 4 not yet implemented');
-        mainLoop();
+        feature4();
         break;
       case 5:
         exitProgram();
@@ -188,43 +214,5 @@ function init() {
   mainLoop();
 }
 
-// ==========================================
-// START THE PROGRAM
-// ==========================================
-
-// Run the program when file is executed
+// Start the program
 init();
-
-// ==========================================
-// DEVELOPMENT NOTES
-// ==========================================
-
-/*
- * TODO LIST:
- * [ ] Customize welcome message
- * [ ] Implement feature 1
- * [ ] Implement feature 2
- * [ ] Implement feature 3
- * [ ] Add error handling
- * [ ] Add input validation
- * [ ] Test all features
- * [ ] Add comments
- * [ ] Write README
- * [ ] Get peer review
- * 
- * TESTING CHECKLIST:
- * [ ] Test with valid inputs
- * [ ] Test with invalid inputs (letters, special chars)
- * [ ] Test with empty input (just pressing Enter)
- * [ ] Test with very large numbers
- * [ ] Test with negative numbers
- * [ ] Test all menu options
- * [ ] Test exit functionality
- * 
- * GIT WORKFLOW REMINDERS:
- * - Create feature branch for each main feature
- * - Commit after completing each feature
- * - Use descriptive commit messages
- * - Merge branches back to main when complete
- * - Push regularly to GitHub
- */
